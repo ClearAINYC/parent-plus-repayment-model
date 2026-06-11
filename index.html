@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Parent PLUS Loan — Repayment Strategy Simulator</title>
+<title>Parent PLUS Loan — Repayment Modeler</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 :root{--ink:#0f172a;--muted:#64748b;--line:#e5e9f0;--brand:#1d4ed8;--brand2:#0ea5e9;
@@ -11,245 +11,244 @@
  --gold:#b45309;--goldbg:#fff7e6;--chip:#eff6ff;--card:#fff;--shadow:0 1px 3px rgba(15,23,42,.07),0 10px 28px rgba(15,23,42,.05);color-scheme:light}
 *{box-sizing:border-box}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:#eef2f7;line-height:1.5;-webkit-font-smoothing:antialiased}
-header{background:linear-gradient(120deg,#0f172a,#1e3a8a);color:#fff;padding:18px 26px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
-header h1{margin:0;font-size:19px;letter-spacing:-.01em}
-header p{margin:3px 0 0;color:#c7d2e5;font-size:12.5px;max-width:680px}
-.modewrap{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border-radius:999px;padding:4px}
-.modewrap button{background:none;border:none;color:#cbd5e1;font-weight:700;font-size:12.5px;padding:6px 14px;border-radius:999px;cursor:pointer}
-.modewrap button.on{background:#fff;color:#1e3a8a}
+header{background:linear-gradient(120deg,#0f172a,#1e3a8a);color:#fff;padding:18px 26px}
+header h1{margin:0;font-size:19px}header p{margin:3px 0 0;color:#c7d2e5;font-size:12.5px;max-width:760px}
 .deadline{background:var(--warnbg);color:#7c2d12;border-bottom:1px solid #fcd34d;padding:8px 26px;font-size:12.5px;font-weight:600;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 nav{background:#fff;border-bottom:1px solid var(--line);display:flex;gap:2px;padding:0 16px;position:sticky;top:0;z-index:30;overflow-x:auto}
-nav button{background:none;border:none;padding:13px 15px;font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+nav button{background:none;border:none;padding:13px 14px;font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
 nav button.active{color:var(--brand);border-bottom-color:var(--brand)}
 .wrap{max-width:1240px;margin:0 auto;padding:20px 16px 80px}
 .tab{display:none}.tab.active{display:block}
-.grid{display:grid;grid-template-columns:370px 1fr;gap:20px;align-items:start}
-@media(max-width:940px){.grid{grid-template-columns:1fr}}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+@media(max-width:880px){.grid{grid-template-columns:1fr}}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow);margin-bottom:18px}
-.card h2{margin:0 0 3px;font-size:16px}
-.card h3{margin:16px 0 8px;font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
-label{display:block;font-size:12.5px;font-weight:600;color:#334155;margin:11px 0 4px}
+.card h2{margin:0 0 3px;font-size:16px}.card h3{margin:16px 0 8px;font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-top:1px solid var(--line);padding-top:12px}
+.card h3.first{border-top:none;padding-top:0}
+label{display:block;font-size:12.5px;font-weight:600;color:#334155;margin:10px 0 4px}
 .hint{font-weight:400;color:var(--muted);font-size:11.5px}
 input,select,textarea{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:9px;font-size:14px;background:#fff;color:var(--ink)}
 input:focus,select:focus{outline:2px solid var(--brand2);border-color:var(--brand2)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 .btn{background:var(--brand);color:#fff;border:none;padding:10px 14px;border-radius:9px;font-weight:600;font-size:13.5px;cursor:pointer}
-.btn.sec{background:#e8edf5;color:#1e293b}.btn.ghost{background:#fff;border:1px solid var(--line);color:var(--brand)}
+.btn.sec{background:#e8edf5;color:#1e293b}.btn.ghost{background:#fff;border:1px solid var(--line);color:var(--brand)}.btn.warn{background:#fee2e2;color:#991b1b}
 .btn:hover{filter:brightness(1.04)}
 .help{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:#cbd5e1;color:#fff;font-size:10px;font-weight:700;cursor:help;margin-left:5px;position:relative;vertical-align:middle}
 .help:hover::after{content:attr(data-tip);position:absolute;left:0;top:150%;background:#0f172a;color:#fff;padding:9px 11px;border-radius:9px;width:250px;font-size:11.5px;font-weight:400;line-height:1.4;z-index:60;box-shadow:0 8px 24px rgba(0,0,0,.22);white-space:normal}
 .help:hover::before{content:'';position:absolute;left:6px;top:128%;border:6px solid transparent;border-bottom-color:#0f172a;z-index:60}
-.dropzone{border:2px dashed #93c5fd;border-radius:12px;background:#f6faff;padding:14px;text-align:center;color:#475569;font-size:12.5px;margin:4px 0 10px}
+.dropzone{border:2px dashed #93c5fd;border-radius:12px;background:#f6faff;padding:12px;text-align:center;color:#475569;font-size:12px;margin:4px 0 10px}
 .dropzone.drag{background:#eaf2ff;border-color:#1d4ed8}.dropzone b{color:#1d4ed8}
-.importbox{display:none;margin-bottom:10px}.importbox textarea{height:70px;font:13px/1.4 ui-monospace,Menlo,Consolas,monospace}
-.linkbtn{background:none;border:none;color:var(--brand);font-size:12.5px;cursor:pointer;text-decoration:underline;padding:0}
+.importbox{display:none;margin-bottom:10px}.importbox textarea{height:64px;font:13px/1.4 ui-monospace,Menlo,Consolas,monospace}
+.linkbtn{background:none;border:none;color:var(--brand);font-size:12px;cursor:pointer;text-decoration:underline;padding:0}
 .loan-row{display:grid;grid-template-columns:1fr 1fr 1fr 26px;gap:6px;align-items:center;margin-bottom:6px}
 .loan-row .x{background:none;border:none;color:var(--bad);cursor:pointer;font-size:17px}
 code{background:#eef2ff;border-radius:4px;padding:1px 5px;font:12px/1 ui-monospace,Menlo,Consolas,monospace}
-.adv{display:none}body.advanced .adv{display:block}
-.adv-tablerow{display:none}body.advanced .adv-tablerow{display:table-row}
-.simpleNote{display:block}body.advanced .simpleNote{display:none}
+.saved{display:flex;flex-direction:column;gap:8px}
+.savedItem{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fbfdff}
+.savedItem .nm{font-weight:700;font-size:13.5px}.savedItem .sub{font-size:11px;color:var(--muted)}
+.savedItem .acts{display:flex;gap:6px}
+.savedItem .acts button{font-size:11.5px;padding:5px 9px;border-radius:7px;border:none;cursor:pointer}
 .objbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--chip);border:1px solid #bfdbfe;border-radius:12px;padding:12px 14px;margin-bottom:14px}
-.objbar label{margin:0;font-size:13px}
-.objbar select{width:auto;min-width:230px;font-weight:600}
-.reco{font-size:14px;background:var(--goodbg);border:1px solid #bbf7d0;border-radius:12px;padding:12px 14px;margin-bottom:14px}
-.reco b{color:var(--good)}
-.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:680px){.cards{grid-template-columns:1fr}}
-.scard{border:1px solid var(--line);border-radius:14px;padding:14px;background:#fff;position:relative;transition:.15s}
-.scard.win{border-color:#f59e0b;box-shadow:0 0 0 2px #fde68a}
-.scard.inelig{opacity:.6}
-.scard .nm{font-size:14.5px;font-weight:700;margin:0 0 2px;padding-right:20px}
-.scard .dsc{font-size:11.5px;color:var(--muted);min-height:30px}
+.objbar label{margin:0;font-size:13px}.objbar select{width:auto;min-width:220px;font-weight:600}
+.reco{font-size:14px;background:var(--goodbg);border:1px solid #bbf7d0;border-radius:12px;padding:12px 14px;margin-bottom:14px}.reco b{color:var(--good)}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:680px){.cards{grid-template-columns:1fr}}
+.scard{border:1px solid var(--line);border-radius:14px;padding:14px;background:#fff;position:relative}
+.scard.win{border-color:#f59e0b;box-shadow:0 0 0 2px #fde68a}.scard.inelig{opacity:.6}
+.scard .nm{font-size:14px;font-weight:700;margin:0 0 2px}.scard .dsc{font-size:11.5px;color:var(--muted);min-height:28px}
 .badges{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0}
-.bdg{font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px;background:var(--goldbg);color:var(--gold);border:1px solid #fcd34d}
-.bdg.gray{background:#f1f5f9;color:#475569;border-color:#e2e8f0}
-.metrics{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;margin-top:8px;font-size:12.5px}
-.metrics .m{display:flex;justify-content:space-between;border-bottom:1px dashed #eef2f7;padding:3px 0}
-.metrics .m span:first-child{color:var(--muted)}
-.metrics .m b{font-variant-numeric:tabular-nums}
-.cmpsel{display:flex;gap:8px;flex-wrap:wrap;align-items:end;margin-bottom:12px}
-.cmpsel>div{flex:1;min-width:160px}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th,td{text-align:right;padding:8px;border-bottom:1px solid var(--line)}th:first-child,td:first-child{text-align:left}
+.bdg{font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px;background:var(--goldbg);color:var(--gold);border:1px solid #fcd34d}.bdg.gray{background:#f1f5f9;color:#475569;border-color:#e2e8f0}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:5px 12px;margin-top:8px;font-size:12.5px}
+.metrics .m{display:flex;justify-content:space-between;border-bottom:1px dashed #eef2f7;padding:3px 0}.metrics .m span:first-child{color:var(--muted)}.metrics .m b{font-variant-numeric:tabular-nums}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:right;padding:8px;border-bottom:1px solid var(--line)}th:first-child,td:first-child{text-align:left}
 thead th{font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);background:#f8fafc}
 .delta.up{color:var(--bad)}.delta.down{color:var(--good)}
 .chartbox{position:relative;height:300px}
-.prose{max-width:820px}.prose h2{font-size:18px;margin-top:22px}.prose h3{font-size:15px;margin-top:16px}
-.prose p,.prose li{font-size:14px;color:#1e293b}.prose a{color:var(--brand)}
-.callout{background:var(--chip);border:1px solid #bfdbfe;border-radius:10px;padding:12px 14px;font-size:13px;margin:12px 0}
-.callout.bad{background:var(--badbg);border-color:#fecaca}.callout.warn{background:var(--warnbg);border-color:#fcd34d}
+.prose{max-width:820px}.prose h2{font-size:18px;margin-top:22px}.prose h3{font-size:15px;margin-top:16px}.prose p,.prose li{font-size:14px;color:#1e293b}
+.callout{background:var(--chip);border:1px solid #bfdbfe;border-radius:10px;padding:12px 14px;font-size:13px;margin:12px 0}.callout.bad{background:var(--badbg);border-color:#fecaca}.callout.warn{background:var(--warnbg);border-color:#fcd34d}
 .tag{display:inline-block;background:#f1f5f9;border:1px solid var(--line);border-radius:6px;padding:1px 7px;font-size:12px;margin:2px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;z-index:99;opacity:0;transition:.25s;pointer-events:none}.toast.show{opacity:1}
+.empty{color:var(--muted);font-size:13px;padding:10px 0}
 footer{color:var(--muted);font-size:12px;text-align:center;padding:18px}
-.pill{font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px}
-.pill.y{background:var(--goodbg);color:var(--good)}.pill.n{background:var(--badbg);color:var(--bad)}.pill.m{background:var(--warnbg);color:var(--warn)}
 </style>
 </head>
 <body>
 <header>
-  <div>
-    <h1>Parent PLUS Loan — Repayment Strategy Simulator</h1>
-    <p>Enter the loan and your situation once, then compare every repayment strategy and see which wins on the goal you choose. Template with placeholder numbers. Not legal, tax, or financial advice.</p>
-  </div>
-  <div class="modewrap" title="Switch between an easy view and full controls">
-    <button id="mSimple" class="on">Simple</button>
-    <button id="mAdv">Advanced</button>
-  </div>
+  <h1>Parent PLUS Loan — Repayment Modeler</h1>
+  <p>Enter every detail that affects the loan, save it under a name, then optimize one loan or compare two. Nothing is assumed for you — you fill it in. Template with placeholder numbers; not legal, tax, or financial advice.</p>
 </header>
 <div class="deadline">⏳ <b>Deadline:</b> to ever use income-based repayment or PSLF, a Parent PLUS loan must be <b>consolidated &amp; disbursed by June 30, 2026</b> (apply ~April 1, 2026). <span id="daysLeft" style="margin-left:auto"></span></div>
 
 <nav id="nav">
-  <button data-tab="model" class="active">Model &amp; Compare</button>
+  <button data-tab="enter" class="active">1 · Enter &amp; Save a Loan</button>
+  <button data-tab="optimize">2 · Optimize</button>
+  <button data-tab="compare">3 · Compare Two Loans</button>
   <button data-tab="guide">How to Use</button>
   <button data-tab="law">The Law (2025–26)</button>
-  <button data-tab="sources">Sources &amp; Assumptions</button>
+  <button data-tab="sources">Sources</button>
 </nav>
 
 <div class="wrap">
-<div class="tab active" id="tab-model">
-<div class="grid">
 
-  <!-- ============ INPUTS ============ -->
+<!-- ================= ENTER & SAVE ================= -->
+<div class="tab active" id="tab-enter">
+<div class="grid">
+  <!-- form -->
   <div>
     <div class="card">
-      <h2>Your loans</h2>
-      <p class="hint">Type each Parent PLUS loan, or drag/drop/paste it. Adding the year auto-fills that year's rate.</p>
-      <div class="dropzone" id="dropZone">
-        <b>Drag &amp; drop</b> a CSV/text file, or <button type="button" class="linkbtn" id="browseBtn">browse</button> / <button type="button" class="linkbtn" id="pasteToggle">paste</button>.
-        <div class="hint" style="margin-top:5px">One per line: <code>balance, rate %, year</code> — e.g. <code>80000, 8.05, 2023</code>. <button type="button" class="linkbtn" id="sampleBtn">load sample</button></div>
-        <div class="hint" id="dropStatus" style="margin-top:5px;font-weight:700"></div>
-        <input type="file" id="fileInput" accept=".csv,.txt,.tsv" style="display:none">
-      </div>
+      <h2>Enter a loan &amp; situation</h2>
+      <p class="hint">Every field below feeds the math. Defaults are shown so you can see typical values — change any to match reality.</p>
+
+      <h3 class="first">The loan(s) <span class="help" data-tip="Add each Parent PLUS loan. Balance is the current payoff amount. Rate is the fixed interest rate. Year auto-fills the official rate for that academic year if you leave rate blank.">?</span></h3>
+      <div class="dropzone" id="dropZone"><b>Drag &amp; drop</b> a CSV/text file, or <button type="button" class="linkbtn" id="browseBtn">browse</button> / <button type="button" class="linkbtn" id="pasteToggle">paste</button>. One per line: <code>balance, rate %, year</code>. <button type="button" class="linkbtn" id="sampleBtn">sample</button><div class="hint" id="dropStatus" style="margin-top:4px;font-weight:700"></div><input type="file" id="fileInput" accept=".csv,.txt,.tsv" style="display:none"></div>
       <div class="importbox" id="importBox"><textarea id="pasteArea" placeholder="80000, 8.05, 2023&#10;40000, 7.54, 2022"></textarea><button class="btn sec" id="loadPaste" style="margin-top:6px">Load rows</button></div>
       <div id="loans"></div>
       <button class="btn ghost" id="addLoan" style="margin-top:4px">+ Add loan</button>
       <div class="hint" id="blended" style="margin-top:8px"></div>
-    </div>
 
-    <div class="card">
-      <h2>Your money</h2>
-      <label>Household income on your tax return (AGI)
-        <span class="help" data-tip="Adjusted Gross Income from the borrower's federal tax return. Income-based plans size your payment off this number, so higher income = higher income-based payment.">?</span></label>
+      <h3>Income &amp; household</h3>
+      <label>Household income on the tax return — AGI ($/yr) <span class="help" data-tip="Adjusted Gross Income from the borrower's (the parent's) federal return. Income-based plans size payments off this.">?</span></label>
       <input id="agi" type="number" value="90000" step="1000">
-      <div class="adv">
-        <div class="row2">
-          <div><label>Income growth %/yr <span class="help" data-tip="How fast income rises each year before retirement. Raises future income-based payments and how fast fixed plans get paid down.">?</span></label><input id="growth" type="number" value="3" step="0.5"></div>
-          <div><label>Marginal tax rate % <span class="help" data-tip="Your combined federal + state tax bracket. Used only to estimate the one-time tax on any forgiven balance (income-based forgiveness is taxable; PSLF is not).">?</span></label><input id="tax" type="number" value="24" step="1"></div>
-        </div>
-        <div class="row2">
-          <div><label>Family size <span class="help" data-tip="People in the household. A bigger family raises the poverty-line deduction, which LOWERS income-based payments.">?</span></label><input id="famSize" type="number" value="2" min="1"></div>
-          <div><label>Dependents <span class="help" data-tip="Dependent children claimed on taxes. Only affects the new RAP plan (which Parent PLUS can't use), so usually leave as-is.">?</span></label><input id="deps" type="number" value="0" min="0"></div>
-        </div>
+      <div class="row2">
+        <div><label>Filing status <span class="help" data-tip="Affects which income counts on income-based plans. Married-filing-separately can sometimes exclude a spouse's income. Enter the AGI consistent with this choice above.">?</span></label>
+          <select id="filing"><option>Single</option><option selected>Married filing jointly</option><option>Married filing separately</option><option>Head of household</option></select></div>
+        <div><label>Family size <span class="help" data-tip="People in the household (you + spouse + dependents). Larger family = bigger poverty-line deduction = lower income-based payment.">?</span></label><input id="famSize" type="number" value="2" min="1"></div>
       </div>
-    </div>
-
-    <div class="card">
-      <h2>Retirement <span class="help" data-tip="When income drops at retirement, income-based payments recalculate and often fall sharply (sometimes to $0). Fixed plans don't change.">?</span></h2>
-      <label>Years until retirement <span class="hint">(leave blank if not modeling it)</span></label>
-      <input id="retYears" type="number" placeholder="e.g. 8" min="0">
-      <label>Estimated income in retirement (AGI)</label>
-      <input id="retAgi" type="number" placeholder="e.g. 40000" step="1000">
-      <div class="adv"><label>Income growth in retirement %/yr</label><input id="retGrowth" type="number" value="2" step="0.5"></div>
-    </div>
-
-    <div class="card">
-      <h2>Situation</h2>
-      <label style="display:flex;align-items:center;gap:8px;font-weight:600"><input type="checkbox" id="pslf" style="width:auto">Borrower works for government / a nonprofit (PSLF)
-        <span class="help" data-tip="Public Service Loan Forgiveness: 120 payments on a qualifying plan while working full-time for government or a 501(c)(3) → remaining balance forgiven TAX-FREE. Requires consolidating first.">?</span></label>
-      <div class="adv">
-        <h3>Advanced settings</h3>
-        <label>Loan era <span class="help" data-tip="Existing = first borrowed before 7/1/2026 (can still reach income-based plans by consolidating in time). New = on/after 7/1/2026 (Standard plan only).">?</span></label>
-        <select id="era"><option value="existing" selected>Existing — borrowed before 7/1/2026</option><option value="new">New — on/after 7/1/2026</option></select>
-        <div class="row2">
-          <div><label>Income-based months already done <span class="help" data-tip="Months already counted toward 20/25-year income-based forgiveness, if any.">?</span></label><input id="idrDone" type="number" value="0" min="0"></div>
-          <div><label>PSLF payments already (of 120) <span class="help" data-tip="Qualifying PSLF payments already made.">?</span></label><input id="pslfDone" type="number" value="0" min="0"></div>
-        </div>
-        <div class="row2">
-          <div><label>Poverty line: 1 person ($) <span class="help" data-tip="2025 federal poverty guideline, 48 states. Alaska/Hawaii are higher. Used to size income-based payments.">?</span></label><input id="pov1" type="number" value="15650"></div>
-          <div><label>Each extra person ($)</label><input id="povAdd" type="number" value="5500"></div>
-        </div>
+      <div class="row2">
+        <div><label>Dependents <span class="help" data-tip="Dependent children. Only affects the RAP plan (which Parent PLUS can't use), so usually leave as-is.">?</span></label><input id="deps" type="number" value="0" min="0"></div>
+        <div><label>Income growth %/yr <span class="help" data-tip="How fast income rises each year before retirement. Raises future income-based payments and speeds payoff on fixed plans.">?</span></label><input id="agiGrowth" type="number" value="3" step="0.5"></div>
       </div>
-      <button class="btn" id="recalc" style="margin-top:14px;width:100%">Update results</button>
-    </div>
 
-    <!-- custom strategy builder (advanced) -->
-    <div class="card adv">
-      <h2>Build a custom strategy <span class="help" data-tip="Bottom-up: set the exact moves and see the outcome. It appears as its own card and in the head-to-head compare.">?</span></h2>
-      <label>Consolidate the loans?</label>
-      <select id="cstCons"><option value="yes">Yes — consolidate</option><option value="no">No</option></select>
-      <label>Repayment plan</label>
-      <select id="cstBase">
-        <option value="STD10">Standard (10-year)</option>
-        <option value="EXT">Extended (25-year)</option>
-        <option value="CONSOL_STD">Consolidated — standard schedule</option>
-        <option value="ICR">Income-based · ICR (20%)</option>
-        <option value="IBR_OLD">Income-based · IBR (15%)</option>
-        <option value="IBR_NEW">Income-based · IBR (10%)</option>
-      </select>
-      <label>Switch plan at retirement? <span class="help" data-tip="Model paying one way now and switching at retirement — e.g. standard now, income-based later when income drops.">?</span></label>
-      <select id="cstRet">
-        <option value="">No switch</option>
-        <option value="ICR">Switch to ICR (20%)</option>
-        <option value="IBR_OLD">Switch to IBR (15%)</option>
-        <option value="IBR_NEW">Switch to IBR (10%)</option>
-        <option value="CONSOL_STD">Switch to standard</option>
-      </select>
-      <label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="cstPslf" style="width:auto">Pursue PSLF (120 payments)</label>
-      <button class="btn sec" id="addCustom" style="margin-top:12px;width:100%">Add / update custom strategy</button>
+      <h3>Retirement <span class="help" data-tip="When income drops at retirement, income-based payments recalculate and often fall sharply. Fixed plans don't change. Leave ages blank to skip modeling retirement.">?</span></h3>
+      <div class="row2">
+        <div><label>Current age</label><input id="curAge" type="number" placeholder="e.g. 58" min="0"></div>
+        <div><label>Planned retirement age</label><input id="retAge" type="number" placeholder="e.g. 66" min="0"></div>
+      </div>
+      <div class="row2">
+        <div><label>Estimated retirement income — AGI ($/yr)</label><input id="retAgi" type="number" placeholder="e.g. 40000" step="1000"></div>
+        <div><label>Income growth in retirement %/yr</label><input id="retGrowth" type="number" value="2" step="0.5"></div>
+      </div>
+
+      <h3>Taxes &amp; forgiveness <span class="help" data-tip="Used to estimate the one-time tax on any forgiven balance. Income-based forgiveness is taxable as of 2026; PSLF is tax-free.">?</span></h3>
+      <div class="row2">
+        <div><label>Federal marginal tax rate %</label><input id="taxFed" type="number" value="22" step="1"></div>
+        <div><label>State marginal tax rate %</label><input id="taxState" type="number" value="5" step="0.5"></div>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;font-weight:600"><input type="checkbox" id="pslfEmployer" style="width:auto">Borrower works full-time for government / a nonprofit <span class="help" data-tip="Eligibility for Public Service Loan Forgiveness (PSLF): 120 qualifying payments → tax-free forgiveness. Requires consolidating first.">?</span></label>
+
+      <h3>Status &amp; history</h3>
+      <div class="row2">
+        <div><label>Loan era <span class="help" data-tip="Existing = first borrowed before 7/1/2026 (can still reach income-based plans by consolidating in time). New = on/after 7/1/2026 (Standard plan only).">?</span></label>
+          <select id="era"><option value="existing" selected>Existing (before 7/1/2026)</option><option value="new">New (on/after 7/1/2026)</option></select></div>
+        <div><label>State <span class="help" data-tip="Sets the federal poverty line used by income-based plans. Alaska and Hawaii are higher.">?</span></label>
+          <select id="state"><option value="48" selected>Lower 48 &amp; DC</option><option value="AK">Alaska</option><option value="HI">Hawaii</option></select></div>
+      </div>
+      <div class="row2">
+        <div><label>Income-based months already done <span class="help" data-tip="Months already counted toward 20/25-year income-based forgiveness, if any.">?</span></label><input id="idrDone" type="number" value="0" min="0"></div>
+        <div><label>PSLF payments already (of 120)</label><input id="pslfDone" type="number" value="0" min="0"></div>
+      </div>
+
+      <h3>Assumptions you can change <span class="help" data-tip="These default to the 2025 federal figures for your state. Edit them for a future year or special case — nothing here is hidden.">?</span></h3>
+      <div class="row2">
+        <div><label>Poverty line: 1 person ($)</label><input id="pov1" type="number" value="15650"></div>
+        <div><label>Each extra person ($)</label><input id="povAdd" type="number" value="5500"></div>
+      </div>
+
+      <h3>Save this loan</h3>
+      <label>Name it <span class="help" data-tip="Give this loan + situation a name (e.g. 'Dad — consolidate now'). It's saved in your browser so you can use it in Optimize and Compare.">?</span></label>
+      <input id="pname" type="text" placeholder="e.g. Dad's PLUS — base case">
+      <div class="row2" style="margin-top:12px">
+        <button class="btn" id="saveProfile">💾 Save loan</button>
+        <button class="btn sec" id="newProfile">Clear form</button>
+      </div>
     </div>
   </div>
 
-  <!-- ============ RESULTS ============ -->
+  <!-- saved list -->
   <div>
     <div class="card">
-      <div class="objbar">
-        <label for="objective"><b>Find the strategy with the…</b></label>
-        <select id="objective">
-          <option value="totalCost">Lowest total cost (lifetime)</option>
-          <option value="monthlyNow">Lowest payment now</option>
-          <option value="monthlyRetire">Lowest payment in retirement</option>
-          <option value="forgiven">Most forgiven</option>
-          <option value="payoff">Fastest payoff</option>
-        </select>
-        <span class="hint">Re-ranks every strategy and crowns the winner.</span>
+      <h2>Saved loans</h2>
+      <p class="hint">Saved in this browser. Use the backup buttons to move them to another device or your dad's computer.</p>
+      <div class="saved" id="savedList"></div>
+      <div class="row2" style="margin-top:14px">
+        <button class="btn ghost" id="exportBtn">⬇ Download backup</button>
+        <button class="btn ghost" id="importProfBtn">⬆ Upload backup</button>
       </div>
-      <div class="reco" id="reco"></div>
-      <h2>Every strategy, compared <span class="help" data-tip="Auto-built from your inputs. ★ marks the winner for the goal selected above. Numbers update when you change inputs and press Update results.">?</span></h2>
-      <p class="hint" id="resSub" style="margin-bottom:12px"></p>
-      <div class="cards" id="cards"></div>
+      <input type="file" id="importProfFile" accept=".json" style="display:none">
     </div>
-
     <div class="card">
-      <h2>Head-to-head <span class="help" data-tip="Top-down: pick any two strategies and see them side by side with the differences.">?</span></h2>
-      <div class="cmpsel">
-        <div><label>Strategy A</label><select id="cmpA"></select></div>
-        <div><label>Strategy B</label><select id="cmpB"></select></div>
-      </div>
-      <div style="overflow-x:auto"><table id="cmpTable"><tbody></tbody></table></div>
-    </div>
-
-    <div class="card">
-      <h2>Loan balance over time</h2>
-      <p class="hint">Showing the crowned winner plus the two head-to-head picks.</p>
-      <div class="chartbox"><canvas id="balChart"></canvas></div>
+      <h2>Quick preview</h2>
+      <p class="hint">A fast read on the loan currently in the form (press to refresh).</p>
+      <button class="btn sec" id="previewBtn" style="margin-bottom:10px">Preview current form</button>
+      <div id="previewBox" class="empty">Fill the form and press Preview, or save it and open the Optimize tab.</div>
     </div>
   </div>
 </div>
 </div>
 
-<!-- GUIDE -->
+<!-- ================= OPTIMIZE ================= -->
+<div class="tab" id="tab-optimize">
+  <div class="card">
+    <div class="objbar">
+      <label><b>Loan:</b></label><select id="optSelect" style="min-width:200px"></select>
+      <label><b>Find the…</b></label>
+      <select id="optObjective">
+        <option value="totalCost">Lowest total cost (lifetime)</option>
+        <option value="monthlyNow">Lowest payment now</option>
+        <option value="monthlyRetire">Lowest payment in retirement</option>
+        <option value="forgiven">Most forgiven</option>
+        <option value="payoff">Fastest payoff</option>
+      </select>
+    </div>
+    <div class="reco" id="optReco"></div>
+    <h2>Every strategy for this loan</h2>
+    <p class="hint" id="optSub" style="margin-bottom:12px"></p>
+    <div class="cards" id="optCards"></div>
+  </div>
+  <div class="card">
+    <h2>Balance over time</h2>
+    <div class="chartbox"><canvas id="optChart"></canvas></div>
+  </div>
+</div>
+
+<!-- ================= COMPARE ================= -->
+<div class="tab" id="tab-compare">
+  <div class="card">
+    <h2>Compare two saved loans</h2>
+    <div class="objbar">
+      <div><label>Loan A</label><select id="cmpA"></select></div>
+      <div><label>Loan B</label><select id="cmpB"></select></div>
+      <div><label>Compare under <span class="help" data-tip="Pick a single strategy to apply to both loans, or let each loan use its own best strategy for the goal.">?</span></label>
+        <select id="cmpBasis">
+          <option value="best">Each loan's best for the goal</option>
+          <option value="std">Standard (10-yr)</option>
+          <option value="cstd">Consolidate, keep standard</option>
+          <option value="icr">Consolidate → income-based (ICR)</option>
+          <option value="ibr">Consolidate → income-based (IBR)</option>
+          <option value="pslf">PSLF</option>
+        </select></div>
+      <div><label>Goal (for "best")</label>
+        <select id="cmpObjective">
+          <option value="totalCost">Lowest total cost</option>
+          <option value="monthlyNow">Lowest payment now</option>
+          <option value="monthlyRetire">Lowest in retirement</option>
+          <option value="forgiven">Most forgiven</option>
+          <option value="payoff">Fastest payoff</option>
+        </select></div>
+    </div>
+    <div style="overflow-x:auto"><table id="cmpTable"><tbody></tbody></table></div>
+  </div>
+  <div class="card"><h2>Balance over time</h2><div class="chartbox"><canvas id="cmpChart"></canvas></div></div>
+</div>
+
+<!-- ================= GUIDE ================= -->
 <div class="tab" id="tab-guide"><div class="card prose">
 <h2>How to use this</h2>
-<p>Switch between <b>Simple</b> and <b>Advanced</b> at the top right. Simple shows the essentials; Advanced exposes every lever (income growth, family size, taxes, poverty figures, payment history, and a custom-strategy builder). Hover any <span class="help" data-tip="Like this one.">?</span> to see what a field does and which way it pushes your payment.</p>
-<h3>1. Enter the loans and your situation</h3>
-<p>Add the Parent PLUS loans (type, drag/drop, or paste). Put in the household income (AGI), and, if you want to see the retirement effect, how many years until retirement and the income you expect then. Press <b>Update results</b>.</p>
-<h3>2. Pick what "best" means</h3>
-<p>Use the <b>"Find the strategy with the…"</b> dropdown to rank by lowest total cost, lowest payment now, lowest payment in retirement, most forgiven, or fastest payoff. The winner gets a ★ and a plain-English recommendation appears.</p>
-<h3>3. Compare head-to-head</h3>
-<p>Pick any two strategies (for example <i>Consolidate → income-based</i> vs <i>Don't consolidate → standard</i>) to see them side by side with the differences, and watch both balances on the chart.</p>
-<h3>4. Try the real questions</h3>
-<p>Consolidate or not? Income-based now, or only after retirement? Go for PSLF? Build any of these in the custom-strategy box (Advanced) and it joins the comparison. Change one input at a time to see how a life choice moves the outcome.</p>
-<div class="callout">The companion Google Sheet and the written guide cover the same logic. This page keeps everything in your browser — nothing you type is sent anywhere.</div>
+<h3>1 · Enter &amp; save a loan</h3>
+<p>On the first tab, fill in everything that affects the loan: the balances and rates, income and household, retirement plans, tax rates, whether the borrower qualifies for PSLF, and the assumptions (poverty figures). Hover any <span class="help" data-tip="Like this.">?</span> to see what a field does. Give it a name and press <b>Save loan</b>. It's stored in your browser; use <b>Download backup</b> to keep a copy or move it to another computer.</p>
+<h3>2 · Optimize</h3>
+<p>Open the Optimize tab, pick a saved loan, and choose what "best" means (lowest total cost, lowest payment now, lowest payment in retirement, most forgiven, fastest payoff). The tool builds every strategy, crowns the winner, and explains it.</p>
+<h3>3 · Compare two loans</h3>
+<p>Save two versions (say "consolidate now" vs "wait", or two different incomes), then the Compare tab puts them side by side with the dollar differences and both balance curves.</p>
+<div class="callout">Nothing is assumed silently — if it changes the math, it's a field you control. The Google/Excel model and the written guide cover the same logic.</div>
 </div></div>
 
 <!-- LAW -->
@@ -257,43 +256,29 @@ footer{color:var(--muted);font-size:12px;text-align:center;padding:18px}
 <h2>Parent PLUS repayment under current law — June 2026</h2>
 <div class="callout bad"><b>The key fact:</b> a Parent PLUS loan can only use Standard, Graduated, and Extended on its own. To reach any income-based plan (ICR, then IBR) or PSLF, you must consolidate into a Direct Consolidation Loan and enroll in ICR — and under the One Big Beautiful Bill Act, that consolidation must be <b>disbursed by June 30, 2026.</b> After that, income-based enrollment closes for Parent PLUS for good.</div>
 <h3>Plans</h3>
-<p><b>Standard</b>: level payment, 10 years (the only fixed plan that counts for PSLF). <b>Extended</b>: up to 25 years, needs &gt;$30k. <b>Consolidation-standard</b>: 12–30 years by balance. <b>ICR</b>: 20% of income above 100% of poverty, forgiven at 25 years — the only income-based plan a consolidated Parent PLUS can enter. <b>IBR</b>: Old = 15% above 150% of poverty (25-yr); New = 10% (20-yr); payment capped at the 10-year standard amount. <b>RAP</b> (new, from 7/1/2026): Direct loans only — <b>Parent PLUS is not eligible</b>, shown for reference.</p>
+<p><b>Standard</b>: level payment, 10 years (the only fixed plan that counts for PSLF). <b>Extended</b>: up to 25 years, needs &gt;$30k. <b>Consolidation-standard</b>: 12–30 years by balance. <b>ICR</b>: 20% of income above 100% of poverty, forgiven at 25 years — the only income-based plan a consolidated Parent PLUS can enter. <b>IBR</b>: Old = 15% above 150% of poverty (25-yr); New = 10% (20-yr); capped at the 10-year standard amount. <b>RAP</b> (new, 7/1/2026): Direct loans only — <b>Parent PLUS not eligible</b>.</p>
 <h3>Forgiveness &amp; taxes</h3>
-<p><b>PSLF</b>: 120 qualifying payments with a government/nonprofit employer → tax-free. <b>Income-based forgiveness</b> (20–30 yrs) is <b>federally taxable again as of Jan 1, 2026</b>, so a big forgiven balance can mean a sizable "tax bomb." This tool estimates it as forgiven balance × your marginal rate.</p>
+<p><b>PSLF</b>: 120 qualifying payments with a government/nonprofit employer → tax-free. <b>Income-based forgiveness</b> (20–30 yrs) is <b>federally taxable again as of Jan 1, 2026</b>. This tool estimates the tax as forgiven balance × your combined marginal rate.</p>
 <h3>Key dates</h3>
-<p><span class="tag">Jan 1, 2026</span> income-based forgiveness taxable again. <span class="tag">Apr 1, 2026</span> recommended consolidation application date. <span class="tag">Jun 30, 2026</span> consolidation must be disbursed for income-based/PSLF access. <span class="tag">Jul 1, 2026</span> RAP opens; new tiered Standard; Parent PLUS borrowing caps. <span class="tag">Jul 1, 2028</span> ICR/PAYE/SAVE end.</p>
-<div class="callout warn">Reflects statute and Department of Education guidance as understood in June 2026; regulations are still being written and dates have shifted before. Confirm with your servicer at studentaid.gov and a tax professional.</div>
+<p><span class="tag">Jan 1, 2026</span> income-based forgiveness taxable. <span class="tag">Apr 1, 2026</span> recommended consolidation application. <span class="tag">Jun 30, 2026</span> consolidation must be disbursed for income-based/PSLF access. <span class="tag">Jul 1, 2026</span> RAP opens; tiered Standard; borrowing caps. <span class="tag">Jul 1, 2028</span> ICR/PAYE/SAVE end.</p>
+<div class="callout warn">Reflects statute and Department of Education guidance as understood June 2026; regulations are still being written. Confirm with your servicer and a tax professional.</div>
 </div></div>
 
 <!-- SOURCES -->
 <div class="tab" id="tab-sources"><div class="card prose">
 <h2>Sources (verified June 2026)</h2>
-<ul>
-<li>Federal Student Aid — OBBBA updates &amp; IDR plans: studentaid.gov</li>
-<li>U.S. Dept. of Education — Dear Colleague Letter (OBBBA), 2025-07-18: fsapartners.ed.gov</li>
-<li>Congressional Research Service — RAP in P.L. 119-21 (IF13075): congress.gov</li>
-<li>Kitces.com — OBBBA student-loan planning guide</li>
-<li>Tate Esq. / Student Loan Planner — Parent PLUS June 30, 2026 deadline</li>
-<li>Saving for College (Kantrowitz) — historical PLUS rates &amp; fees</li>
-<li>HHS ASPE — 2025 poverty guidelines</li>
-</ul>
+<ul><li>Federal Student Aid — studentaid.gov (OBBBA updates, IDR plans)</li><li>U.S. Dept. of Education — Dear Colleague Letter (OBBBA) 2025-07-18</li><li>Congressional Research Service — RAP in P.L. 119-21 (IF13075)</li><li>Kitces.com — OBBBA student-loan planning guide</li><li>Tate Esq. / Student Loan Planner — June 30, 2026 deadline</li><li>Saving for College (Kantrowitz) — historical PLUS rates &amp; fees</li><li>HHS ASPE — 2025 poverty guidelines</li></ul>
 <h2>Assumptions &amp; simplifications</h2>
-<ul>
-<li><b>ICR</b> uses the 20%-of-discretionary-income branch (real ICR is the lesser of that or a 12-yr factor, so it can be a bit lower at low incomes).</li>
-<li><b>Graduated</b> is omitted here for clarity; Standard, Extended, Consolidation-standard, and all income-based formulas are exact.</li>
-<li><b>Interest</b> compounds annually in this view; the spreadsheet matches. Capitalization is simplified (ICR capitalizes yearly; IBR accrues uncapitalized).</li>
-<li><b>"Income-based only after retirement"</b> counts the forgiveness clock from when repayment began (time-in-repayment), the borrower-favorable reading. Confirm timing with your servicer.</li>
-<li><b>IBR for Parent PLUS</b> defaults to Old IBR (15%/25-yr). Taxes are a flat estimate; PSLF is tax-free.</li>
-<li>Projections under today's rules; law, rates, and poverty figures change yearly.</li>
-</ul>
+<ul><li>ICR uses the 20%-of-discretionary-income branch. Standard/Extended/Consolidation and income-based formulas are exact; interest compounds annually here (matches the sheet).</li><li>"Income-based only after retirement" counts the forgiveness clock from when repayment began (borrower-favorable). Confirm timing with your servicer.</li><li>IBR for Parent PLUS defaults to Old IBR (15%/25-yr). Taxes are a flat estimate; PSLF is tax-free.</li><li>Projections under today's rules; law, rates, and poverty figures change yearly.</li></ul>
 <p class="hint">Not legal, tax, or financial advice.</p>
 </div></div>
 
 </div>
-<footer>Parent PLUS Repayment Strategy Simulator · template · figures verified June 2026 · not legal/tax/financial advice</footer>
+<footer>Parent PLUS Repayment Modeler · template · figures verified June 2026 · not legal/tax/financial advice</footer>
+<div class="toast" id="toast"></div>
 
 <script>
-/* ===================== ENGINE (verified, mirrors engine2.js) ===================== */
+/* ===================== ENGINE (verified) ===================== */
 const PLUS_RATES={2025:8.94,2024:9.08,2023:8.05,2022:7.54,2021:6.28,2020:5.30,2019:7.08,2018:7.60,2017:7.00,2016:6.31,2015:6.84,2014:7.21,2013:6.41,2012:7.90,2011:7.90,2010:7.90,2009:7.90,2008:7.90,2007:7.90,2006:7.90};
 function fpl(n,b1,pp){return (b1||15650)+(Math.max(1,n)-1)*(pp||5500);}
 function levelPayment(B,a,n){const r=a/100/12;if(n<=0)return B;if(r===0)return B/n;return B*r/(1-Math.pow(1+r,-n));}
@@ -303,8 +288,7 @@ function consolidationTermMonths(b){if(b<7500)return 120;if(b<10000)return 144;i
 function newStandardTermMonths(b){if(b<25000)return 120;if(b<50000)return 180;if(b<100000)return 240;return 300;}
 function rapPercent(agi){if(agi<=10000)return null;if(agi<=20000)return .01;if(agi<=30000)return .02;if(agi<=40000)return .03;if(agi<=50000)return .04;if(agi<=60000)return .05;if(agi<=70000)return .06;if(agi<=80000)return .07;if(agi<=90000)return .08;if(agi<=100000)return .09;return .10;}
 function agiForYear(y,p){const yr=(p.retYears==null||p.retYears===''||+p.retYears<0)?Infinity:+p.retYears;if(y<yr)return p.agi0*Math.pow(1+(p.growthPre||0)/100,y);return (p.retAgi||0)*Math.pow(1+(p.growthPost||0)/100,y-yr);}
-const IDRPLANS=['ICR','IBR_OLD','IBR_NEW','RAP'];const FORGIVE={ICR:300,IBR_OLD:300,IBR_NEW:240,RAP:360};
-const isIDR=p=>IDRPLANS.indexOf(p)>=0;
+const IDRPLANS=['ICR','IBR_OLD','IBR_NEW','RAP'];const FORGIVE={ICR:300,IBR_OLD:300,IBR_NEW:240,RAP:360};const isIDR=p=>IDRPLANS.indexOf(p)>=0;
 function idrMonthly(plan,agi,p,std10){const F=fpl(p.famSize,p.pov1,p.povAdd);
   if(plan==='ICR')return Math.max(0,agi-F)*0.20/12;
   if(plan==='IBR_NEW')return Math.min(Math.max(0,agi-1.5*F)*0.10/12,std10);
@@ -312,168 +296,182 @@ function idrMonthly(plan,agi,p,std10){const F=fpl(p.famSize,p.pov1,p.povAdd);
   if(plan==='RAP'){const pct=rapPercent(agi);let pay=(pct==null)?10:(agi*pct/12)-50*(p.deps||0);return Math.max(10,pay);}return 0;}
 function simulate(o){
   const loans=o.loans||[];let bal=loans.reduce((s,l)=>s+(+l.balance||0),0);
-  const rate=o.consolidate?consolidationRate(loans):blendedRate(loans);
-  const std10=levelPayment(bal,rate,120);const r=rate/100/12;
+  const rate=o.consolidate?consolidationRate(loans):blendedRate(loans);const std10=levelPayment(bal,rate,120);const r=rate/100/12;
   const retMonth=(o.retYears==null||o.retYears===''||+o.retYears<0)?Infinity:Math.round(+o.retYears*12);
   const idrPlan=isIDR(o.basePlan)?o.basePlan:(isIDR(o.retPlan)?o.retPlan:null);
   let forgiveMonth=Infinity,taxFree=false;
-  if(o.pslf){forgiveMonth=Math.max(1,120-(o.pslfMonthsDone||0));taxFree=true;}
-  else if(idrPlan){forgiveMonth=Math.max(1,FORGIVE[idrPlan]-(o.idrMonthsDone||0));}
+  if(o.pslf){forgiveMonth=Math.max(1,120-(o.pslfMonthsDone||0));taxFree=true;}else if(idrPlan){forgiveMonth=Math.max(1,FORGIVE[idrPlan]-(o.idrMonthsDone||0));}
   function fixedTerm(p){if(p==='STD10')return 120;if(p==='EXT')return 300;if(p==='CONSOL_STD')return consolidationTermMonths(bal);if(p==='NEW_STD')return newStandardTermMonths(bal);return 120;}
   const baseTerm=fixedTerm(o.basePlan);const basePay=levelPayment(bal,rate,baseTerm);
-  let principal=bal,accrued=0,total=0,m=0,first=null,retPay=null;const yearly=[];let yP=0,yI=0,yPr=0;
+  let principal=bal,accrued=0,total=0,m=0,first=null,retPay=null;const yearly=[];let yP=0,yI=0;
   const cap=Math.max(forgiveMonth===Infinity?0:forgiveMonth,baseTerm)+2;
   while(m<cap&&principal>0.005){
-    const year=Math.floor(m/12);const agi=agiForYear(year,o);
-    const switched=(o.retPlan&&m>=retMonth);const plan=switched?o.retPlan:o.basePlan;
+    const year=Math.floor(m/12);const agi=agiForYear(year,o);const switched=(o.retPlan&&m>=retMonth);const plan=switched?o.retPlan:o.basePlan;
     const interest=principal*r;let pay;
-    if(isIDR(plan)){pay=idrMonthly(plan,agi,o,std10);}
-    else{if(switched){const rem=Math.max(12,fixedTerm(plan)-m);pay=levelPayment(principal,rate,rem);}else{pay=basePay;}}
+    if(isIDR(plan)){pay=idrMonthly(plan,agi,o,std10);}else{if(switched){const rem=Math.max(12,fixedTerm(plan)-m);pay=levelPayment(principal,rate,rem);}else{pay=basePay;}}
     if(first===null)first=pay;if(m===retMonth)retPay=pay;
     let toPrin;
-    if(plan==='RAP'){toPrin=(pay>=interest)?Math.max(pay-interest,50):50;if(toPrin>principal)toPrin=principal;principal-=toPrin;total+=pay;yI+=interest;yPr+=toPrin;}
-    else{if(pay>=interest){toPrin=pay-interest;if(accrued>0){const x=Math.min(accrued,toPrin);accrued-=x;toPrin-=x;}if(toPrin>principal)toPrin=principal;principal-=toPrin;total+=pay;yI+=interest;yPr+=toPrin;}else{accrued+=interest-pay;total+=pay;yI+=interest;if(plan==='ICR'&&m%12===11){principal+=accrued;accrued=0;}}}
+    if(plan==='RAP'){toPrin=(pay>=interest)?Math.max(pay-interest,50):50;if(toPrin>principal)toPrin=principal;principal-=toPrin;total+=pay;yI+=interest;}
+    else{if(pay>=interest){toPrin=pay-interest;if(accrued>0){const x=Math.min(accrued,toPrin);accrued-=x;toPrin-=x;}if(toPrin>principal)toPrin=principal;principal-=toPrin;total+=pay;yI+=interest;}else{accrued+=interest-pay;total+=pay;yI+=interest;if(plan==='ICR'&&m%12===11){principal+=accrued;accrued=0;}}}
     if(principal<0)principal=0;yP+=pay;m++;
-    if(m%12===0||principal<=0.005||m>=cap){yearly.push({year:Math.ceil(m/12),balance:Math.max(0,principal+accrued)});yP=0;yI=0;yPr=0;}
+    if(m%12===0||principal<=0.005||m>=cap){yearly.push({year:Math.ceil(m/12),balance:Math.max(0,principal+accrued)});yP=0;yI=0;}
     if(m>=forgiveMonth)break;
   }
-  const paidOff=principal<=0.005;const forgiven=paidOff?0:(principal+accrued);
-  const tax=(paidOff||taxFree)?0:forgiven*(o.taxRate||0)/100;
-  let monthlyRetire=null;
-  if(retMonth!==Infinity){const plan=o.retPlan||o.basePlan;const agi=agiForYear(Math.floor(retMonth/12),o);monthlyRetire=isIDR(plan)?idrMonthly(plan,agi,o,std10):(retPay!=null?retPay:basePay);}
+  const paidOff=principal<=0.005;const forgiven=paidOff?0:(principal+accrued);const tax=(paidOff||taxFree)?0:forgiven*(o.taxRate||0)/100;
+  let monthlyRetire=null;if(retMonth!==Infinity){const plan=o.retPlan||o.basePlan;const agi=agiForYear(Math.floor(retMonth/12),o);monthlyRetire=isIDR(plan)?idrMonthly(plan,agi,o,std10):(retPay!=null?retPay:basePay);}
   return{monthlyNow:first||0,monthlyRetire,years:m/12,totalPaid:total,forgiven,tax,paidOff,totalCost:total+tax,yearly,rate,balance:bal};
 }
 
-/* ===================== UI ===================== */
+/* ===================== STRATEGIES ===================== */
+function profileOpts(P,cfg){
+  let retY='';if(P.curAge&&P.retAge&&+P.retAge>+P.curAge)retY=+P.retAge-+P.curAge;
+  return Object.assign({loans:(P.loans||[]).map(l=>({balance:+l.balance||0,rate:+l.rate||0})),
+    agi0:+P.agi||0,growthPre:+P.agiGrowth||0,retYears:retY,retAgi:+P.retAgi||0,growthPost:+P.retGrowth||0,
+    famSize:+P.famSize||1,deps:+P.deps||0,pov1:+P.pov1||15650,povAdd:+P.povAdd||5500,
+    taxRate:(+P.taxFed||0)+(+P.taxState||0),idrMonthsDone:+P.idrDone||0,pslfMonthsDone:+P.pslfDone||0},cfg);
+}
+function buildStrategies(P){const bal=(P.loans||[]).reduce((s,l)=>s+(+l.balance||0),0);const newLoan=P.era==='new';const list=[];
+  const add=(id,name,desc,elig,cfg)=>list.push({id,name,desc,elig,r:simulate(profileOpts(P,cfg))});
+  let retY='';if(P.curAge&&P.retAge&&+P.retAge>+P.curAge)retY=+P.retAge-+P.curAge;
+  if(!newLoan){
+    add('std','Pay it off — Standard','Level payment for 10 years. No consolidation. Counts for PSLF.','y',{consolidate:false,basePlan:'STD10'});
+    if(bal>30000)add('ext','Stretch out — Extended','Lower fixed payment over 25 years.','y',{consolidate:false,basePlan:'EXT'});
+    add('cstd','Consolidate, keep standard','One loan, standard schedule (12–30 yrs by balance). No income test.','y',{consolidate:true,basePlan:'CONSOL_STD'});
+    add('icr','Consolidate → income-based (ICR)','20% of income over the poverty line. Forgiveness at 25 years (taxable).','m',{consolidate:true,basePlan:'ICR'});
+    add('ibr','Consolidate → income-based (IBR)','15% of income over 150% of poverty, capped at the 10-yr standard. 25-yr forgiveness (taxable).','m',{consolidate:true,basePlan:'IBR_OLD'});
+    if(retY!=='')add('late','Standard now → income-based at retirement','Pay standard while working, drop to income-based when income falls.','m',{consolidate:true,basePlan:'CONSOL_STD',retPlan:'IBR_OLD'});
+    if(P.pslfEmployer)add('pslf','Go for forgiveness — PSLF','Consolidate → income-based, 120 payments at a qualifying employer → tax-free.','m',{consolidate:true,basePlan:'IBR_OLD',pslf:true});
+    add('rap','RAP (reference only)','New income-based plan — Parent PLUS NOT eligible. Shown for context.','n',{consolidate:true,basePlan:'RAP'});
+  }else{add('nstd','New tiered Standard','Only option for loans on/after 7/1/2026: 10–25 yrs by balance.','y',{consolidate:false,basePlan:'NEW_STD'});}
+  return list;
+}
+const OBJ={totalCost:{label:'lowest total cost',pick:'min',key:r=>r.totalCost,fmt:r=>fmt(r.totalCost)+' total'},
+  monthlyNow:{label:'lowest payment now',pick:'min',key:r=>r.monthlyNow,fmt:r=>fmt(r.monthlyNow)+'/mo now'},
+  monthlyRetire:{label:'lowest payment in retirement',pick:'min',key:r=>r.monthlyRetire==null?Infinity:r.monthlyRetire,fmt:r=>r.monthlyRetire==null?'n/a (set retirement)':fmt(r.monthlyRetire)+'/mo in retirement'},
+  forgiven:{label:'most forgiven',pick:'max',key:r=>r.forgiven,fmt:r=>fmt(r.forgiven)+' forgiven'},
+  payoff:{label:'fastest payoff',pick:'min',key:r=>r.paidOff?r.years:Infinity,fmt:r=>r.paidOff?r.years.toFixed(1)+' yrs':'no payoff'}};
+function winnerFor(obj,S){const o=OBJ[obj];let best=null;S.filter(s=>s.elig!=='n').forEach(s=>{const v=o.key(s.r);if(v===Infinity||v===-Infinity||isNaN(v))return;if(obj==='forgiven'&&v<=0)return;if(obj==='payoff'&&!s.r.paidOff)return;if(best===null){best=s;return;}const bv=o.key(best.r);if((o.pick==='min'&&v<bv)||(o.pick==='max'&&v>bv))best=s;});return best;}
+
+/* ===================== STORAGE ===================== */
+const KEY='ppplus_profiles_v1';let PROFILES=[];
+function loadStore(){try{PROFILES=JSON.parse(localStorage.getItem(KEY))||[];}catch(e){PROFILES=[];}}
+function saveStore(){try{localStorage.setItem(KEY,JSON.stringify(PROFILES));}catch(e){toast('Could not save (storage blocked) — use Download backup');}}
+function seedIfEmpty(){if(PROFILES.length)return;PROFILES=[
+  {name:'Example — consolidate now',loans:[{balance:80000,rate:8.05,year:2023},{balance:40000,rate:7.54,year:2022}],agi:90000,filing:'Married filing jointly',famSize:2,deps:0,agiGrowth:3,curAge:58,retAge:66,retAgi:40000,retGrowth:2,taxFed:22,taxState:5,pslfEmployer:false,era:'existing',state:'48',idrDone:0,pslfDone:0,pov1:15650,povAdd:5500},
+  {name:'Example — lower income',loans:[{balance:80000,rate:8.05,year:2023},{balance:40000,rate:7.54,year:2022}],agi:55000,filing:'Single',famSize:1,deps:0,agiGrowth:2,curAge:60,retAge:67,retAgi:30000,retGrowth:1,taxFed:12,taxState:4,pslfEmployer:false,era:'existing',state:'48',idrDone:0,pslfDone:0,pov1:15650,povAdd:5500}
+];saveStore();}
+
+/* ===================== UI HELPERS ===================== */
 const $=id=>document.getElementById(id);
 const fmt=n=>(n||n===0)?'$'+Math.round(n).toLocaleString():'—';
 let LOANS=[{balance:80000,rate:8.05,year:2023},{balance:40000,rate:7.54,year:2022}];
-let RESULTS=[],CUSTOM=null,balChart;
+let optChart,cmpChart;
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('show'),2600);}
 
-/* loans table + import (cross-browser) */
+/* loans editor + import */
 function renderLoans(){const c=$('loans');c.innerHTML='';LOANS.forEach((l,i)=>{const d=document.createElement('div');d.className='loan-row';
   d.innerHTML='<input type="number" value="'+l.balance+'" placeholder="Balance" data-i="'+i+'" data-k="balance"><input type="number" step="0.01" value="'+l.rate+'" placeholder="Rate %" data-i="'+i+'" data-k="rate"><input type="number" value="'+(l.year||'')+'" placeholder="Year" data-i="'+i+'" data-k="year"><button class="x" data-del="'+i+'">×</button>';c.appendChild(d);});
   c.querySelectorAll('input').forEach(inp=>inp.oninput=e=>{const i=+e.target.dataset.i,k=e.target.dataset.k;if(k==='year'){const y=+e.target.value;LOANS[i].year=y;if(PLUS_RATES[y]){LOANS[i].rate=PLUS_RATES[y];renderLoans();}}else LOANS[i][k]=+e.target.value;updateBlended();});
   c.querySelectorAll('[data-del]').forEach(b=>b.onclick=e=>{LOANS.splice(+e.target.dataset.del,1);renderLoans();});updateBlended();}
-function totals(){let bal=0;LOANS.forEach(l=>bal+=(+l.balance||0));return{bal,bRate:blendedRate(LOANS.map(l=>({balance:+l.balance||0,rate:+l.rate||0}))),cRate:consolidationRate(LOANS.map(l=>({balance:+l.balance||0,rate:+l.rate||0})))};}
-function updateBlended(){const t=totals();$('blended').innerHTML='<b>Total:</b> '+fmt(t.bal)+' · blended rate '+t.bRate.toFixed(2)+'% · consolidation rate '+t.cRate.toFixed(3)+'%';}
+function updateBlended(){let bal=0;LOANS.forEach(l=>bal+=(+l.balance||0));const br=blendedRate(LOANS.map(l=>({balance:+l.balance||0,rate:+l.rate||0})));const cr=consolidationRate(LOANS.map(l=>({balance:+l.balance||0,rate:+l.rate||0})));$('blended').innerHTML='<b>Total:</b> '+fmt(bal)+' · blended rate '+br.toFixed(2)+'% · consolidation rate '+cr.toFixed(3)+'%';}
 function parseLoanText(txt){const rows=[];(txt||'').split(/\r?\n/).forEach(line=>{if(!line.trim())return;const clean=line.replace(/\$/g,'').replace(/%/g,'').replace(/,(?=\d{3}(\D|$))/g,'');const nums=clean.split(/[\s,;|]+/).map(s=>parseFloat(s)).filter(n=>!isNaN(n));if(!nums.length)return;const bal=nums[0];if(bal<=1000)return;let year='',rate='';for(let i=1;i<nums.length;i++){if(nums[i]>=1990&&nums[i]<=2100&&Number.isInteger(nums[i]))year=Math.round(nums[i]);else if(nums[i]>0&&nums[i]<30&&rate==='')rate=nums[i];}if(rate==='')rate=(year&&PLUS_RATES[year])?PLUS_RATES[year]:8.94;rows.push({balance:Math.round(bal),rate:rate,year:year});});return rows;}
 function flashDrop(m,bad){const s=$('dropStatus');if(!s)return;s.textContent=m;s.style.color=bad?'#b91c1c':'#15803d';clearTimeout(flashDrop._t);flashDrop._t=setTimeout(()=>s.textContent='',3500);}
-function importLoans(t){const rows=parseLoanText(t);if(rows.length){LOANS=rows;renderLoans();recalc();flashDrop('✓ Imported '+rows.length+' loan'+(rows.length>1?'s':''));}else flashDrop('Couldn’t read rows. Use: balance, rate %, year',true);}
+function importLoans(t){const rows=parseLoanText(t);if(rows.length){LOANS=rows;renderLoans();flashDrop('✓ Imported '+rows.length+' loan'+(rows.length>1?'s':''));}else flashDrop('Couldn’t read rows. Use: balance, rate %, year',true);}
 function readFile(f){if(!f)return;const r=new FileReader();r.onload=()=>importLoans(String(r.result));r.readAsText(f);}
 
-function readInputs(){const t=totals();return{loans:LOANS.map(l=>({balance:+l.balance||0,rate:+l.rate||0})),bal:t.bal,
-  era:$('era').value,agi0:+$('agi').value||0,growthPre:+$('growth').value||0,tax:+$('tax').value||0,
-  famSize:+$('famSize').value||1,deps:+$('deps').value||0,retYears:$('retYears').value,retAgi:+$('retAgi').value||0,growthPost:+$('retGrowth').value||0,
-  pslf:$('pslf').checked,idrDone:+$('idrDone').value||0,pslfDone:+$('pslfDone').value||0,pov1:+$('pov1').value||15650,povAdd:+$('povAdd').value||5500};}
+/* poverty by state */
+function applyState(){const s=$('state').value;const map={'48':[15650,5500],'AK':[19550,6870],'HI':[17990,6320]};const v=map[s]||map['48'];$('pov1').value=v[0];$('povAdd').value=v[1];}
 
-function opts(I,cfg){return Object.assign({loans:I.loans,agi0:I.agi0,growthPre:I.growthPre,retYears:I.retYears,retAgi:I.retAgi,growthPost:I.growthPost,
-  famSize:I.famSize,deps:I.deps,pov1:I.pov1,povAdd:I.povAdd,taxRate:I.tax,idrMonthsDone:I.idrDone,pslfMonthsDone:I.pslfDone},cfg);}
+/* form <-> profile */
+function readForm(){return{name:$('pname').value.trim(),loans:LOANS.map(l=>({balance:+l.balance||0,rate:+l.rate||0,year:l.year||''})),
+  agi:+$('agi').value||0,filing:$('filing').value,famSize:+$('famSize').value||1,deps:+$('deps').value||0,agiGrowth:+$('agiGrowth').value||0,
+  curAge:$('curAge').value,retAge:$('retAge').value,retAgi:+$('retAgi').value||0,retGrowth:+$('retGrowth').value||0,
+  taxFed:+$('taxFed').value||0,taxState:+$('taxState').value||0,pslfEmployer:$('pslfEmployer').checked,
+  era:$('era').value,state:$('state').value,idrDone:+$('idrDone').value||0,pslfDone:+$('pslfDone').value||0,pov1:+$('pov1').value||15650,povAdd:+$('povAdd').value||5500};}
+function fillForm(P){LOANS=(P.loans||[]).map(l=>({balance:l.balance,rate:l.rate,year:l.year}));renderLoans();
+  $('pname').value=P.name||'';$('agi').value=P.agi;$('filing').value=P.filing||'Married filing jointly';$('famSize').value=P.famSize;$('deps').value=P.deps;$('agiGrowth').value=P.agiGrowth;
+  $('curAge').value=P.curAge||'';$('retAge').value=P.retAge||'';$('retAgi').value=P.retAgi||'';$('retGrowth').value=P.retGrowth;
+  $('taxFed').value=P.taxFed;$('taxState').value=P.taxState;$('pslfEmployer').checked=!!P.pslfEmployer;$('era').value=P.era||'existing';$('state').value=P.state||'48';
+  $('idrDone').value=P.idrDone||0;$('pslfDone').value=P.pslfDone||0;$('pov1').value=P.pov1||15650;$('povAdd').value=P.povAdd||5500;}
 
-function buildStrategies(I){
-  const newLoan=I.era==='new';const list=[];
-  function add(id,name,desc,elig,cfg){list.push({id,name,desc,elig,r:simulate(opts(I,cfg))});}
-  if(!newLoan){
-    add('std','Pay it off — Standard','Level payment for 10 years. No consolidation. Counts for PSLF.','y',{consolidate:false,basePlan:'STD10'});
-    if(I.bal>30000) add('ext','Stretch out — Extended','Lower fixed payment over 25 years. No income test.','y',{consolidate:false,basePlan:'EXT'});
-    add('cstd','Consolidate, keep standard','One loan, standard schedule (12–30 yrs by balance). No income test, no income-based forgiveness.','y',{consolidate:true,basePlan:'CONSOL_STD'});
-    add('icr','Consolidate → income-based (ICR)','20% of income over the poverty line. Forgiveness at 25 years (taxable).','m',{consolidate:true,basePlan:'ICR'});
-    add('ibr','Consolidate → income-based (IBR)','15% of income over 150% of poverty, capped at the 10-yr standard. Forgiveness at 25 years (taxable).','m',{consolidate:true,basePlan:'IBR_OLD'});
-    if(I.retYears!=='') add('late','Standard now → income-based at retirement','Pay standard while working, drop to income-based when income falls at retirement.','m',{consolidate:true,basePlan:'CONSOL_STD',retPlan:'IBR_OLD'});
-    if(I.pslf) add('pslf','Go for forgiveness — PSLF','Consolidate → income-based, 120 payments while at a qualifying employer → tax-free forgiveness.','m',{consolidate:true,basePlan:'IBR_OLD',pslf:true});
-    add('rap','RAP (reference only)','The new income-based plan — Parent PLUS is NOT eligible. Shown for context.','n',{consolidate:true,basePlan:'RAP'});
-  } else {
-    add('nstd','New tiered Standard','The only option for loans taken on/after 7/1/2026: 10–25 yrs by balance.','y',{consolidate:false,basePlan:'NEW_STD'});
-  }
-  if(CUSTOM) list.push(Object.assign({},CUSTOM,{r:simulate(opts(I,CUSTOM.cfg))}));
-  return list;
-}
+function saveProfile(){const P=readForm();if(!P.name){toast('Give the loan a name first');$('pname').focus();return;}
+  if(!P.loans.length||P.loans.every(l=>!l.balance)){toast('Add at least one loan balance');return;}
+  const i=PROFILES.findIndex(x=>x.name.toLowerCase()===P.name.toLowerCase());if(i>=0)PROFILES[i]=P;else PROFILES.push(P);
+  saveStore();renderSaved();refreshSelectors();toast('Saved “'+P.name+'”');}
+function renderSaved(){const w=$('savedList');w.innerHTML='';if(!PROFILES.length){w.innerHTML='<div class="empty">No loans saved yet. Fill the form and press Save loan.</div>';return;}
+  PROFILES.forEach((P,i)=>{const bal=(P.loans||[]).reduce((s,l)=>s+(+l.balance||0),0);const d=document.createElement('div');d.className='savedItem';
+    d.innerHTML='<div><div class="nm">'+P.name+'</div><div class="sub">'+fmt(bal)+' · AGI '+fmt(P.agi)+(P.pslfEmployer?' · PSLF':'')+'</div></div><div class="acts"><button class="btn sec" data-load="'+i+'">Load</button><button class="btn ghost" data-dup="'+i+'">Duplicate</button><button class="btn warn" data-del="'+i+'">Delete</button></div>';w.appendChild(d);});
+  w.querySelectorAll('[data-load]').forEach(b=>b.onclick=e=>{fillForm(PROFILES[+e.target.dataset.load]);window.scrollTo(0,0);toast('Loaded into form');});
+  w.querySelectorAll('[data-dup]').forEach(b=>b.onclick=e=>{const c=JSON.parse(JSON.stringify(PROFILES[+e.target.dataset.dup]));c.name+=' (copy)';PROFILES.push(c);saveStore();renderSaved();refreshSelectors();});
+  w.querySelectorAll('[data-del]').forEach(b=>b.onclick=e=>{PROFILES.splice(+e.target.dataset.del,1);saveStore();renderSaved();refreshSelectors();});}
 
-const OBJ={
-  totalCost:{label:'lowest total cost',pick:'min',key:r=>r.totalCost,fmt:r=>fmt(r.totalCost)+' total'},
-  monthlyNow:{label:'lowest payment now',pick:'min',key:r=>r.monthlyNow,fmt:r=>fmt(r.monthlyNow)+'/mo now'},
-  monthlyRetire:{label:'lowest payment in retirement',pick:'min',key:r=>r.monthlyRetire==null?Infinity:r.monthlyRetire,fmt:r=>r.monthlyRetire==null?'n/a':fmt(r.monthlyRetire)+'/mo in retirement'},
-  forgiven:{label:'most forgiven',pick:'max',key:r=>r.forgiven,fmt:r=>fmt(r.forgiven)+' forgiven'},
-  payoff:{label:'fastest payoff',pick:'min',key:r=>r.paidOff?r.years:Infinity,fmt:r=>r.paidOff?r.years.toFixed(1)+' yrs':'no payoff'}
-};
-function winnerFor(obj,strats){const o=OBJ[obj];let best=null;strats.filter(s=>s.elig!=='n').forEach(s=>{const v=o.key(s.r);if(v===Infinity||v===-Infinity||isNaN(v))return;if(obj==='forgiven'&&v<=0)return;if(obj==='payoff'&&!s.r.paidOff)return;if(best===null){best=s;return;}const bv=o.key(best.r);if((o.pick==='min'&&v<bv)||(o.pick==='max'&&v>bv))best=s;});return best;}
+/* export / import */
+function exportProfiles(){const blob=new Blob([JSON.stringify(PROFILES,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='parent-plus-loans-backup.json';a.click();}
+function importProfiles(f){const r=new FileReader();r.onload=()=>{try{const arr=JSON.parse(r.result);if(Array.isArray(arr)){arr.forEach(p=>{if(p&&p.name){const i=PROFILES.findIndex(x=>x.name===p.name);if(i>=0)PROFILES[i]=p;else PROFILES.push(p);}});saveStore();renderSaved();refreshSelectors();toast('Imported '+arr.length+' loan(s)');}}catch(e){toast('That file could not be read');}};r.readAsText(f);}
 
-function recalc(){const I=readInputs();RESULTS=buildStrategies(I);
-  $('resSub').textContent='Balance '+fmt(I.bal)+' · income '+fmt(I.agi0)+(I.retYears!==''?' · retire in '+I.retYears+' yrs at '+fmt(I.retAgi):'')+(I.pslf?' · PSLF employer':'');
-  const obj=$('objective').value;
-  // winners per objective (for badges)
-  const wins={};Object.keys(OBJ).forEach(k=>{const w=winnerFor(k,RESULTS);if(w)wins[k]=w.id;});
-  const champ=winnerFor(obj,RESULTS);
-  // recommendation
-  if(champ){$('reco').innerHTML='✅ For the <b>'+OBJ[obj].label+'</b>: <b>'+champ.name+'</b> — '+OBJ[obj].fmt(champ.r)+'. '+recoExtra(champ);}
-  else $('reco').textContent='No strategy qualifies for “'+OBJ[obj].label+'” with these inputs (for example, nothing is forgiven, or nothing fully pays off in the window). Try another goal or adjust the inputs.';
-  // cards
-  const c=$('cards');c.innerHTML='';
-  const ranked=RESULTS.slice().sort((a,b)=>{if(a.elig==='n')return 1;if(b.elig==='n')return -1;const o=OBJ[obj];const av=o.key(a.r),bv=o.key(b.r);return o.pick==='min'?av-bv:bv-av;});
+/* selectors for optimize/compare */
+function refreshSelectors(){['optSelect','cmpA','cmpB'].forEach(id=>{const sel=$(id);const prev=sel.value;sel.innerHTML='';PROFILES.forEach((P,i)=>sel.add(new Option(P.name,i)));if(prev&&PROFILES[prev])sel.value=prev;});
+  if(PROFILES.length>1&&$('cmpB').value===$('cmpA').value)$('cmpB').value=1;
+  renderOptimize();renderCompare();}
+
+/* preview current form */
+function preview(){const P=readForm();if(!P.loans.length){$('previewBox').textContent='Add a loan first.';return;}const S=buildStrategies(P);const w=winnerFor('totalCost',S);
+  $('previewBox').innerHTML=w?('<b>Lowest total cost:</b> '+w.name+' — '+fmt(w.r.totalCost)+' total, '+fmt(w.r.monthlyNow)+'/mo now.'+(P.curAge&&P.retAge?' Payment in retirement under that plan: '+fmt(w.r.monthlyRetire)+'.':'')):'Enter details to preview.';}
+
+/* OPTIMIZE */
+function renderOptimize(){const sel=$('optSelect');if(!PROFILES.length){$('optReco').textContent='Save a loan on tab 1 first.';$('optCards').innerHTML='';$('optSub').textContent='';return;}
+  const P=PROFILES[sel.value]||PROFILES[0];const S=buildStrategies(P);const obj=$('optObjective').value;
+  const wins={};Object.keys(OBJ).forEach(k=>{const w=winnerFor(k,S);if(w)wins[k]=w.id;});const champ=winnerFor(obj,S);
+  $('optSub').textContent=P.name+' · balance '+fmt(P.loans.reduce((s,l)=>s+(+l.balance||0),0))+' · AGI '+fmt(P.agi);
+  $('optReco').innerHTML=champ?('✅ For the <b>'+OBJ[obj].label+'</b>: <b>'+champ.name+'</b> — '+OBJ[obj].fmt(champ.r)+'.'):'No strategy fits that goal with these inputs.';
+  const c=$('optCards');c.innerHTML='';
+  const ranked=S.slice().sort((a,b)=>{if(a.elig==='n')return 1;if(b.elig==='n')return -1;const o=OBJ[obj];return o.pick==='min'?o.key(a.r)-o.key(b.r):o.key(b.r)-o.key(a.r);});
   ranked.forEach(s=>{const r=s.r;const card=document.createElement('div');card.className='scard'+(champ&&s.id===champ.id?' win':'')+(s.elig==='n'?' inelig':'');
     let badges='';Object.keys(wins).forEach(k=>{if(wins[k]===s.id)badges+='<span class="bdg">★ '+OBJ[k].label+'</span>';});
-    if(s.elig==='m')badges+='<span class="bdg gray">needs consolidation by 6/30/26</span>';
-    if(s.elig==='n')badges+='<span class="bdg gray">not eligible</span>';
-    card.innerHTML='<div class="nm">'+s.name+'</div><div class="dsc">'+s.desc+'</div><div class="badges">'+badges+'</div>'+
-      '<div class="metrics">'+
-      met('Payment now',fmt(r.monthlyNow))+
-      met('In retirement',r.monthlyRetire==null?'—':fmt(r.monthlyRetire))+
-      met('Total paid',fmt(r.totalPaid))+
-      met('Forgiven',r.forgiven>0?fmt(r.forgiven):'—')+
-      met('Est. tax',r.tax>0?fmt(r.tax):(r.forgiven>0?'$0':'—'))+
-      met('Total cost',fmt(r.totalCost))+
-      met('Done in',r.forgiven>0?(r.years).toFixed(0)+' yrs*':r.years.toFixed(1)+' yrs')+
-      met('Rate',r.rate.toFixed(2)+'%')+
-      '</div>';c.appendChild(card);});
-  populateCompare();drawChart(champ);}
+    if(s.elig==='m')badges+='<span class="bdg gray">needs consolidation by 6/30/26</span>';if(s.elig==='n')badges+='<span class="bdg gray">not eligible</span>';
+    card.innerHTML='<div class="nm">'+s.name+'</div><div class="dsc">'+s.desc+'</div><div class="badges">'+badges+'</div><div class="metrics">'+
+      met('Payment now',fmt(r.monthlyNow))+met('In retirement',r.monthlyRetire==null?'—':fmt(r.monthlyRetire))+met('Total paid',fmt(r.totalPaid))+met('Forgiven',r.forgiven>0?fmt(r.forgiven):'—')+met('Est. tax',r.tax>0?fmt(r.tax):(r.forgiven>0?'$0':'—'))+met('Total cost',fmt(r.totalCost))+met('Done in',r.forgiven>0?r.years.toFixed(0)+' yrs*':r.years.toFixed(1)+' yrs')+met('Rate',r.rate.toFixed(2)+'%')+'</div>';c.appendChild(card);});
+  drawChart('optChart',S.filter(s=>s.elig!=='n').slice(0,4),champ,()=>optChart,v=>optChart=v);}
 function met(l,v){return '<div class="m"><span>'+l+'</span><b>'+v+'</b></div>';}
-function recoExtra(s){const r=s.r;if(r.forgiven>0&&r.tax>0)return 'Heads up: '+fmt(r.forgiven)+' would be forgiven but taxed ~'+fmt(r.tax)+'.';if(r.forgiven>0&&r.tax===0)return fmt(r.forgiven)+' forgiven tax-free.';return 'Paid off in about '+r.years.toFixed(0)+' years.';}
 
-/* head-to-head */
-function populateCompare(){const a=$('cmpA'),b=$('cmpB');const prevA=a.value,prevB=b.value;a.innerHTML='';b.innerHTML='';
-  RESULTS.forEach((s,i)=>{a.add(new Option(s.name,s.id));b.add(new Option(s.name,s.id));});
-  a.value=prevA&&RESULTS.some(s=>s.id===prevA)?prevA:(RESULTS[0]&&RESULTS[0].id);
-  const def2=RESULTS.find(s=>s.id==='icr')||RESULTS.find(s=>s.id==='cstd')||RESULTS[1]||RESULTS[0];
-  b.value=prevB&&RESULTS.some(s=>s.id===prevB)?prevB:(def2&&def2.id);
-  renderCompare();}
-function renderCompare(){const A=RESULTS.find(s=>s.id===$('cmpA').value),B=RESULTS.find(s=>s.id===$('cmpB').value);if(!A||!B)return;
-  const rows=[['Payment now','monthlyNow'],['Payment in retirement','monthlyRetire'],['Total paid','totalPaid'],['Forgiven','forgiven'],['Est. tax','tax'],['Total cost','totalCost']];
+/* COMPARE */
+function stratById(S,id){return S.find(s=>s.id===id);}
+function renderCompare(){if(PROFILES.length<1){$('cmpTable').innerHTML='<tbody><tr><td>Save at least two loans on tab 1 to compare.</td></tr></tbody>';return;}
+  const A=PROFILES[$('cmpA').value]||PROFILES[0],B=PROFILES[$('cmpB').value]||PROFILES[0];const SA=buildStrategies(A),SB=buildStrategies(B);
+  const basis=$('cmpBasis').value,obj=$('cmpObjective').value;
+  function pick(S){if(basis==='best')return winnerFor(obj,S);return stratById(S,basis)||winnerFor('totalCost',S);}
+  const a=pick(SA),b=pick(SB);if(!a||!b){$('cmpTable').innerHTML='<tbody><tr><td>That strategy isn’t available for one of these loans.</td></tr></tbody>';return;}
+  const rows=[['Strategy used',s=>s.name],['Payment now',s=>fmt(s.r.monthlyNow)],['Payment in retirement',s=>s.r.monthlyRetire==null?'—':fmt(s.r.monthlyRetire)],['Total paid',s=>fmt(s.r.totalPaid)],['Forgiven',s=>s.r.forgiven>0?fmt(s.r.forgiven):'—'],['Est. tax',s=>s.r.tax>0?fmt(s.r.tax):'—'],['Total cost',s=>fmt(s.r.totalCost)],['Done in',s=>s.r.forgiven>0?s.r.years.toFixed(0)+' yrs*':s.r.years.toFixed(1)+' yrs']];
   let html='<thead><tr><th>Metric</th><th>'+A.name+'</th><th>'+B.name+'</th><th>Difference</th></tr></thead><tbody>';
-  rows.forEach(([lab,k])=>{const av=A.r[k],bv=B.r[k];const a=av==null?'—':fmt(av),bb=bv==null?'—':fmt(bv);
-    let d='—',cls='';if(av!=null&&bv!=null){const diff=bv-av;const lowerBetter=(k!=='forgiven');d=(diff>0?'+':diff<0?'−':'')+fmt(Math.abs(diff));cls=diff===0?'':(((diff<0)===lowerBetter)?'delta down':'delta up');}
-    html+='<tr><td>'+lab+'</td><td>'+a+'</td><td>'+bb+'</td><td class="'+cls+'">'+d+'</td></tr>';});
-  html+='<tr><td>Done in</td><td>'+(A.r.forgiven>0?A.r.years.toFixed(0)+' yrs*':A.r.years.toFixed(1)+' yrs')+'</td><td>'+(B.r.forgiven>0?B.r.years.toFixed(0)+' yrs*':B.r.years.toFixed(1)+' yrs')+'</td><td></td></tr></tbody>';
-  $('cmpTable').innerHTML=html;drawChart();}
+  rows.forEach(([lab,f])=>{const av=f(a),bv=f(b);let d='';const keys={'Payment now':'monthlyNow','Total paid':'totalPaid','Total cost':'totalCost','Forgiven':'forgiven','Est. tax':'tax','Payment in retirement':'monthlyRetire'};
+    if(keys[lab]){const k=keys[lab];const na=a.r[k],nb=b.r[k];if(na!=null&&nb!=null){const diff=nb-na;const lowerBetter=(k!=='forgiven');const cls=diff===0?'':(((diff<0)===lowerBetter)?'delta down':'delta up');d='<span class="'+cls+'">'+(diff>0?'+':diff<0?'−':'')+fmt(Math.abs(diff))+'</span>';}}
+    html+='<tr><td>'+lab+'</td><td>'+av+'</td><td>'+bv+'</td><td>'+d+'</td></tr>';});
+  html+='</tbody>';$('cmpTable').innerHTML=html;
+  const aa=Object.assign({},a,{name:A.name+': '+a.name});const bb=Object.assign({},b,{name:B.name+': '+b.name});
+  drawChart('cmpChart',[aa,bb],null,()=>cmpChart,v=>cmpChart=v);}
 
-/* chart: winner + A + B */
-function drawChart(champ){const A=RESULTS.find(s=>s.id===$('cmpA').value),B=RESULTS.find(s=>s.id===$('cmpB').value);
-  const set=[];const seen={};function addS(s,color){if(!s||seen[s.id])return;seen[s.id]=1;set.push({label:s.name.slice(0,28),data:s.r.yearly.map(y=>Math.round(y.balance)),borderColor:color,backgroundColor:'transparent',tension:.25,pointRadius:0,borderWidth:2});}
-  addS(champ||winnerFor($('objective').value,RESULTS),'#f59e0b');addS(A,'#1d4ed8');addS(B,'#0ea5e9');
-  const maxY=Math.max(1,...set.map(d=>d.data.length));const labels=Array.from({length:maxY},(_,i)=>'Yr '+(i+1));
-  if(!window.Chart)return;if(balChart)balChart.destroy();
-  balChart=new Chart($('balChart'),{type:'line',data:{labels,datasets:set},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:12,font:{size:11}}}},scales:{y:{ticks:{callback:v=>'$'+(v/1000)+'k'}}}}});}
+/* chart */
+function drawChart(canvasId,strats,champ,get,set){if(!window.Chart)return;const colors=['#f59e0b','#1d4ed8','#0ea5e9','#9333ea','#15803d'];
+  const datasets=strats.map((s,i)=>({label:(s.name||'').slice(0,30),data:s.r.yearly.map(y=>Math.round(y.balance)),borderColor:champ&&s.id===champ.id?'#f59e0b':colors[(i+1)%colors.length],backgroundColor:'transparent',tension:.25,pointRadius:0,borderWidth:2}));
+  const maxY=Math.max(1,...datasets.map(d=>d.data.length));const labels=Array.from({length:maxY},(_,i)=>'Yr '+(i+1));
+  const cur=get();if(cur)cur.destroy();set(new Chart($(canvasId),{type:'line',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:12,font:{size:11}}}},scales:{y:{ticks:{callback:v=>'$'+(v/1000)+'k'}}}}}));}
 
-/* custom strategy */
-function addCustom(){const I=readInputs();const base=$('cstBase').value,ret=$('cstRet').value,cons=$('cstCons').value==='yes',pslf=$('cstPslf').checked;
-  const cfg={consolidate:cons,basePlan:base};if(ret)cfg.retPlan=ret;if(pslf)cfg.pslf=true;
-  const nm='Custom: '+(cons?'consolidate, ':'')+planName(base)+(ret?(' → '+planName(ret)):'')+(pslf?' + PSLF':'');
-  CUSTOM={id:'custom',name:nm,desc:'Your custom strategy.',elig:(isIDR(base)||isIDR(ret)||pslf)?'m':'y',cfg:cfg};recalc();$('cmpA').value='custom';renderCompare();}
-function planName(p){return{STD10:'Standard',EXT:'Extended',CONSOL_STD:'standard',ICR:'ICR',IBR_OLD:'IBR',IBR_NEW:'IBR-new',RAP:'RAP',NEW_STD:'tiered Standard'}[p]||p;}
-
-/* nav + mode */
-document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));$('tab-'+b.dataset.tab).classList.add('active');});
-$('mSimple').onclick=()=>{document.body.classList.remove('advanced');$('mSimple').classList.add('on');$('mAdv').classList.remove('on');};
-$('mAdv').onclick=()=>{document.body.classList.add('advanced');$('mAdv').classList.add('on');$('mSimple').classList.remove('on');};
+/* nav */
+document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));$('tab-'+b.dataset.tab).classList.add('active');if(b.dataset.tab==='optimize')renderOptimize();if(b.dataset.tab==='compare')renderCompare();});
 (function(){const d=new Date('2026-06-30')-new Date();const days=Math.ceil(d/864e5);$('daysLeft').textContent=days>0?days+' days left':'deadline passed';})();
 
-/* wire up */
+/* wire */
 $('addLoan').onclick=()=>{LOANS.push({balance:10000,rate:8.94,year:2025});renderLoans();};
-$('recalc').onclick=recalc;$('objective').onchange=recalc;$('cmpA').onchange=renderCompare;$('cmpB').onchange=renderCompare;$('addCustom').onclick=addCustom;
 $('browseBtn').onclick=()=>$('fileInput').click();$('fileInput').onchange=e=>readFile(e.target.files[0]);
 $('pasteToggle').onclick=()=>{const b=$('importBox');b.style.display=b.style.display==='block'?'none':'block';};
 $('loadPaste').onclick=()=>importLoans($('pasteArea').value);$('sampleBtn').onclick=()=>importLoans('80000, 8.05, 2023\n40000, 7.54, 2022');
 (function(){const dz=$('dropZone');['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.add('drag');}));['dragleave','dragend'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.remove('drag');}));dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag');if(e.dataTransfer.files&&e.dataTransfer.files.length)readFile(e.dataTransfer.files[0]);else{const t=e.dataTransfer.getData('text');if(t)importLoans(t);}});})();
-renderLoans();recalc();
+$('state').onchange=applyState;$('saveProfile').onclick=saveProfile;$('newProfile').onclick=()=>{LOANS=[{balance:0,rate:8.94,year:''}];renderLoans();$('pname').value='';toast('Form cleared');};
+$('previewBtn').onclick=preview;$('exportBtn').onclick=exportProfiles;$('importProfBtn').onclick=()=>$('importProfFile').click();$('importProfFile').onchange=e=>{if(e.target.files[0])importProfiles(e.target.files[0]);};
+$('optSelect').onchange=renderOptimize;$('optObjective').onchange=renderOptimize;
+$('cmpA').onchange=renderCompare;$('cmpB').onchange=renderCompare;$('cmpBasis').onchange=renderCompare;$('cmpObjective').onchange=renderCompare;
+
+loadStore();seedIfEmpty();renderLoans();renderSaved();refreshSelectors();
 </script>
 </body>
 </html>
