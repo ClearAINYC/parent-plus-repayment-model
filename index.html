@@ -396,7 +396,7 @@ const OBJ={
   forgiven:{label:'most forgiven',pick:'max',key:r=>r.forgiven,fmt:r=>fmt(r.forgiven)+' forgiven'},
   payoff:{label:'fastest payoff',pick:'min',key:r=>r.paidOff?r.years:Infinity,fmt:r=>r.paidOff?r.years.toFixed(1)+' yrs':'no payoff'}
 };
-function winnerFor(obj,strats){const o=OBJ[obj];let best=null;strats.filter(s=>s.elig!=='n').forEach(s=>{const v=o.key(s.r);if(v===Infinity||isNaN(v))return;if(best===null)best=s;else{const bv=o.key(best.r);if((o.pick==='min'&&v<bv)||(o.pick==='max'&&v>bv))best=s;}});return best;}
+function winnerFor(obj,strats){const o=OBJ[obj];let best=null;strats.filter(s=>s.elig!=='n').forEach(s=>{const v=o.key(s.r);if(v===Infinity||v===-Infinity||isNaN(v))return;if(obj==='forgiven'&&v<=0)return;if(obj==='payoff'&&!s.r.paidOff)return;if(best===null){best=s;return;}const bv=o.key(best.r);if((o.pick==='min'&&v<bv)||(o.pick==='max'&&v>bv))best=s;});return best;}
 
 function recalc(){const I=readInputs();RESULTS=buildStrategies(I);
   $('resSub').textContent='Balance '+fmt(I.bal)+' · income '+fmt(I.agi0)+(I.retYears!==''?' · retire in '+I.retYears+' yrs at '+fmt(I.retAgi):'')+(I.pslf?' · PSLF employer':'');
@@ -406,7 +406,7 @@ function recalc(){const I=readInputs();RESULTS=buildStrategies(I);
   const champ=winnerFor(obj,RESULTS);
   // recommendation
   if(champ){$('reco').innerHTML='✅ For the <b>'+OBJ[obj].label+'</b>: <b>'+champ.name+'</b> — '+OBJ[obj].fmt(champ.r)+'. '+recoExtra(champ);}
-  else $('reco').textContent='Enter your details and press Update results.';
+  else $('reco').textContent='No strategy qualifies for “'+OBJ[obj].label+'” with these inputs (for example, nothing is forgiven, or nothing fully pays off in the window). Try another goal or adjust the inputs.';
   // cards
   const c=$('cards');c.innerHTML='';
   const ranked=RESULTS.slice().sort((a,b)=>{if(a.elig==='n')return 1;if(b.elig==='n')return -1;const o=OBJ[obj];const av=o.key(a.r),bv=o.key(b.r);return o.pick==='min'?av-bv:bv-av;});
